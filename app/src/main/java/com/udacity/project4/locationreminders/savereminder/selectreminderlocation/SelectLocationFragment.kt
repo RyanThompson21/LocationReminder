@@ -9,23 +9,27 @@ import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.content.res.Resources
+import android.location.Location
 import android.net.Uri
 import android.os.Bundle
+import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import android.view.*
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
 import com.udacity.project4.BuildConfig
 import com.udacity.project4.R
@@ -48,6 +52,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private lateinit var binding: FragmentSelectLocationBinding
 
     private lateinit var map: GoogleMap
+    private lateinit var fusedClient: FusedLocationProviderClient
+    private lateinit var curLocation: Location
     private var PoiSelected by Delegates.notNull<Boolean>()
     private lateinit var chosenPoi: PointOfInterest
     private val TAG = this.javaClass.simpleName
@@ -65,16 +71,37 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         setHasOptionsMenu(true)
         setDisplayHomeAsUpEnabled(true)
 
-//        TODO: add the map setup implementation
-//        TODO: zoom to the user location after taking his permission
-//        TODO: add style to the map
-//        TODO: put a marker to location that the user selected
+        fusedClient = LocationServices.getFusedLocationProviderClient(context as Activity)
 
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        mapFragment.getMapAsync(this)
 
-//        TODO: call this function after the user confirms on the selected location
-        onLocationSelected()
+        // listener for save button,
+        // shows toast "Please select a point of interest" if user hasn't
+        binding.saveBtn.setOnClickListener {
+            if (PoiSelected) {
+                onLocationSelected()
+            } else {
+                Toast.makeText(
+                    context,
+                    getString(R.string.select_poi),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
 
         return binding.root
+    }
+
+    private fun onLocationSelected() {
+        _viewModel.poiSelected.value = true
+        _viewModel.selectedPOI.value = chosenPoi
+        _viewModel.reminderSelectedLocationStr.value = chosenPoi.name
+
+        findNavController().apply {
+            navigate(R.id.saveReminderFragment)
+            popBackStack(R.id.selectLocationFragment, true)
+        }
     }
 
     private fun isPermissionGranted(): Boolean {
@@ -85,27 +112,42 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         ) == PERMISSION_GRANTED
     }
 
+     @SuppressLint("MissingPermission")
      override fun onMapReady(googleMap: GoogleMap) {
          PoiSelected = false
          map = googleMap
          checkPermissionsAndDeviceLocationSettings()
 
-         CameraUpdateFactory.zoomTo(15f)
          setMapLongClick(map)
          setPoiClick(map)
-         setMapStyle(map) //Styling only applies to maps that use the normal map type.
+         setMapStyle(map)
+
     }
+
 
     @SuppressLint("MissingPermission")
     private fun enableLocationLayer() {
 
-        Log.e(TAG, "Inside Enable Location Start")
-        if (!map.isMyLocationEnabled) {
-            map.isMyLocationEnabled = true
-
+        if (isPermissionGranted()) {
+            val locationResult = fusedClient.lastLocation
+            locationResult.addOnCompleteListener {
+                if (it.isSuccessful) {
+                    curLocation = it.result
+                    if (curLocation != null) {
+                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                            LatLng(curLocation!!.latitude, curLocation!!.longitude), 15f))
+                    }
+                } else {
+                    Log.e(TAG, "doesnt work")
+                }
+            }
+        } else {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                REQUEST_PERMISSION_LOCATION
+            )
         }
-        showSnackBar(getString(R.string.select_poi))
-
     }
 
     private fun checkPermissionsAndDeviceLocationSettings() {
@@ -285,13 +327,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             }
         }
     }
-
-    private fun onLocationSelected() {
-        //        TODO: When the user confirms on the selected location,
-        //         send back the selected location details to the view model
-        //         and navigate back to the previous fragment to save the reminder and add the geofence
-    }
-
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.map_options, menu)
