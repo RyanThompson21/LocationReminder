@@ -105,7 +105,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
     private fun isPermissionGranted(): Boolean {
-
         return ContextCompat.checkSelfPermission(
             requireContext(),
             Manifest.permission.ACCESS_FINE_LOCATION
@@ -124,23 +123,35 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
     }
 
+    @SuppressLint("MissingPermission")
+    private fun getLiveLocation(locationRequest: LocationRequest) {
+        fusedClient.lastLocation.addOnSuccessListener { location ->
+            if (location != null) { // location exists so we use the info to center the map
+                curLocation = location
+                val latLng = LatLng(curLocation.latitude, curLocation.longitude)
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+            } else { // location is null so request location update
+                val locationCallback = object : LocationCallback() {
+                    override fun onLocationResult(locationResult: LocationResult?) {
+                        locationResult ?: return
+                        for (location in locationResult.locations){
+                            curLocation = location
+                            val latLng = LatLng(curLocation.latitude, curLocation.longitude)
+                            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+                        }
+                    }
+                }
+                fusedClient.requestLocationUpdates(locationRequest, locationCallback,
+                    Looper.getMainLooper())
+            }
+        }
+    }
 
     @SuppressLint("MissingPermission")
     private fun enableLocationLayer() {
 
         if (isPermissionGranted()) {
-            val locationResult = fusedClient.lastLocation
-            locationResult.addOnCompleteListener {
-                if (it.isSuccessful) {
-                    curLocation = it.result
-                    if (curLocation != null) {
-                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                            LatLng(curLocation!!.latitude, curLocation!!.longitude), 15f))
-                    }
-                } else {
-                    Log.e(TAG, "doesnt work")
-                }
-            }
+            map.isMyLocationEnabled = true
         } else {
             ActivityCompat.requestPermissions(
                 requireActivity(),
@@ -231,7 +242,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         }
 
         locationSettingsResponseTask.addOnSuccessListener {
-
+            getLiveLocation(locationRequest)
             Log.e(TAG, "SUCCESSFUL!")
 
         }
