@@ -1,33 +1,41 @@
 {
   "project_info": {
-    "project_number": "747246354350",
-    "project_id": "locationreminder-133e1",
-    "storage_bucket": "locationreminder-133e1.appspot.com"
+    "project_number": "208164700885",
+    "project_id": "tactile-metrics-361920",
+    "storage_bucket": "tactile-metrics-361920.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:747246354350:android:5b06530674f6b0ef01523f",
+        "mobilesdk_app_id": "1:208164700885:android:a3486bbb73f39a8106585c",
         "android_client_info": {
           "package_name": "com.udacity.project4"
         }
       },
       "oauth_client": [
         {
-          "client_id": "747246354350-0pakmj0sj4kcltm7q6dh0c87d1iaj52b.apps.googleusercontent.com",
+          "client_id": "208164700885-85guu41njmr4r3qn8njvnersma3ro4ia.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.udacity.project4",
+            "certificate_hash": "3c361abf2fd77cc8805ac2c5891bd8b1f51b902b"
+          }
+        },
+        {
+          "client_id": "208164700885-ga8mk2jg2b0rp8oa6f2a73frkv2t2165.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDboiBv64aL09x0pTQG5se0GsXf1MfDjC0"
+          "current_key": "AIzaSyBqC8MYSjpB1XuS37XBSOzNLKB4AnUqcls"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "747246354350-0pakmj0sj4kcltm7q6dh0c87d1iaj52b.apps.googleusercontent.com",
+              "client_id": "208164700885-ga8mk2jg2b0rp8oa6f2a73frkv2t2165.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
