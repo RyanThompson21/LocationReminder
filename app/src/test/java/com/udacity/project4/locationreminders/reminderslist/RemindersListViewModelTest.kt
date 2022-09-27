@@ -23,7 +23,7 @@ import org.koin.core.context.stopKoin
 @ExperimentalCoroutinesApi
 class RemindersListViewModelTest {
 
-    //TODO: provide testing to the RemindersListViewModel and its live data objects
+
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
 

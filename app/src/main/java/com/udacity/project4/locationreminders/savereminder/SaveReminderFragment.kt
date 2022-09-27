@@ -14,6 +14,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
@@ -219,8 +220,6 @@ class SaveReminderFragment : BaseFragment() {
 
         locationSettingsResponseTask.addOnCompleteListener {
             if (it.isSuccessful) {
-                Log.e(TAG, "SUCCESSFUL!")
-
                 createGeofenceRequestAndAdd()
             }
         }
@@ -268,9 +267,7 @@ class SaveReminderFragment : BaseFragment() {
             addOnFailureListener {
                 // Failed to add geofences
                 Log.e("Could not add Geofence", geofence.requestId)
-                if ((it.message != null)) {
-                    Log.w(TAG, it.message.toString())
-                }
+
             }
         }
     }

@@ -25,7 +25,6 @@ import org.koin.core.context.stopKoin
 @RunWith(AndroidJUnit4::class)
 class SaveReminderViewModelTest {
 
-    //TODO: provide testing to the SaveReminderView and its live data objects
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
 
@@ -60,7 +59,7 @@ class SaveReminderViewModelTest {
     }
 
     @Test
-    fun testValidate() {
+    fun testValidate_Errors() {
         fakeDataSource = FakeDataSource(null)
         saveReminderViewModel = SaveReminderViewModel(ApplicationProvider.getApplicationContext(),
             fakeDataSource)
