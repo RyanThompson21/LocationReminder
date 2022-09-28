@@ -37,8 +37,7 @@ class SaveReminderFragment : BaseFragment() {
     companion object {
         const val TAG = "SaveReminderFragment"
         val GEOFENCE_EXPIRATION_IN_MILLISECONDS: Long = TimeUnit.HOURS.toMillis(1)
-        internal const val ACTION_GEOFENCE_EVENT =
-            "SaveReminderFragment.project4.action.ACTION_GEOFENCE_EVENT"
+        internal const val ACTION_GEOFENCE_EVENT = "ACTION_GEOFENCE_EVENT"
 
         private const val REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE = 33
         private const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
@@ -83,7 +82,8 @@ class SaveReminderFragment : BaseFragment() {
         binding.selectLocation.setOnClickListener {
             //            Navigate to another fragment to get the user location
             _viewModel.navigationCommand.value =
-                NavigationCommand.To(SaveReminderFragmentDirections.actionSaveReminderFragmentToSelectLocationFragment())
+                NavigationCommand.To(SaveReminderFragmentDirections.
+                actionSaveReminderFragmentToSelectLocationFragment())
         }
 
         binding.saveReminder.setOnClickListener {
@@ -236,7 +236,7 @@ class SaveReminderFragment : BaseFragment() {
                 reminderDataItem.longitude!!,
                 GEOFENCE_RADIUS_IN_METERS
             )
-            .setExpirationDuration(Geofence.NEVER_EXPIRE)
+            .setExpirationDuration(TimeUnit.HOURS.toMillis(1))
             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
             .build()
 
@@ -258,7 +258,6 @@ class SaveReminderFragment : BaseFragment() {
 
     @SuppressLint("MissingPermission")
     private fun addGeoFenceRequest(geofencingRequest: GeofencingRequest, geofence: Geofence) {
-
         geofencingClient?.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
             addOnSuccessListener {
                 // Geofences added
