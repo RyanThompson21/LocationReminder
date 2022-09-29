@@ -43,6 +43,7 @@ class RemindersListViewModelTest {
     @Test
     fun testLoadReminders() {
         fakeDataSource = FakeDataSource(mutableListOf(reminder1, reminder2))
+        fakeDataSource.setShouldReturnError(false)
         remindersListViewModel = RemindersListViewModel(ApplicationProvider.getApplicationContext(),
         fakeDataSource)
         remindersListViewModel.loadReminders()
@@ -53,6 +54,7 @@ class RemindersListViewModelTest {
     @Test
     fun testLoadRemindersError() {
         fakeDataSource = FakeDataSource(null)
+        fakeDataSource.setShouldReturnError(true)
         remindersListViewModel = RemindersListViewModel(ApplicationProvider.getApplicationContext(),
             fakeDataSource)
 

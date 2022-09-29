@@ -236,7 +236,7 @@ class SaveReminderFragment : BaseFragment() {
                 reminderDataItem.longitude!!,
                 GEOFENCE_RADIUS_IN_METERS
             )
-            .setExpirationDuration(TimeUnit.HOURS.toMillis(1))
+            .setExpirationDuration(Geofence.NEVER_EXPIRE)
             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
             .build()
 

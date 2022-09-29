@@ -41,6 +41,7 @@ class SaveReminderViewModelTest {
     @Test
     fun testSaveReminder() {
         fakeDataSource = FakeDataSource()
+        fakeDataSource.setShouldReturnError(false)
         saveReminderViewModel = SaveReminderViewModel(ApplicationProvider.getApplicationContext(),
             fakeDataSource)
         mainCoroutineRule.pauseDispatcher()
@@ -61,6 +62,7 @@ class SaveReminderViewModelTest {
     @Test
     fun testValidate_Errors() {
         fakeDataSource = FakeDataSource(null)
+        fakeDataSource.setShouldReturnError(true)
         saveReminderViewModel = SaveReminderViewModel(ApplicationProvider.getApplicationContext(),
             fakeDataSource)
         reminder1.title = null

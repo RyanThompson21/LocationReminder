@@ -103,9 +103,10 @@ class ReminderListFragmentTest : KoinTest{
 
     @Test
     fun checkNoReminders_DisplaysNoData() = runBlockingTest {
-        repository.deleteAllReminders() // clear repo
+        repository.deleteAllReminders()// clear repo
+        (repository as FakeDataSource).setShouldReturnError(true)
         launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
-        // test for snackbar message is in RemindersListViewModelTest
+        // successful test for snackbar message is in RemindersListViewModelTest
         onView(withId(R.id.noDataTextView))
             .check(matches(withText("No Data")))
     }
