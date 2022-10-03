@@ -34,6 +34,7 @@ android {
         jvmTarget = "1.8"
     }
     testOptions.unitTests {
+
         includeAndroidResources = true
         returnDefaultValues = true
     }
@@ -93,7 +94,6 @@ dependencies {
     //Koin
     implementation "org.koin:koin-android:$koinVersion"
     implementation "org.koin:koin-androidx-viewmodel:$koinVersion"
-
 
     // Dependencies for local unit tests
     testImplementation "junit:junit:$junitVersion"

@@ -9,6 +9,7 @@ import com.udacity.project4.locationreminders.data.FakeDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.getOrAwaitValue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.not
@@ -41,9 +42,11 @@ class RemindersListViewModelTest {
         "location2", 100.0, 100.0)
 
     @Test
-    fun testLoadReminders() {
-        fakeDataSource = FakeDataSource(mutableListOf(reminder1, reminder2))
+    fun testLoadReminders() = runBlockingTest {
+        fakeDataSource = FakeDataSource()
         fakeDataSource.setShouldReturnError(false)
+        fakeDataSource.saveReminder(reminder1)
+        fakeDataSource.saveReminder(reminder2)
         remindersListViewModel = RemindersListViewModel(ApplicationProvider.getApplicationContext(),
         fakeDataSource)
         remindersListViewModel.loadReminders()
@@ -53,7 +56,7 @@ class RemindersListViewModelTest {
 
     @Test
     fun testLoadRemindersError() {
-        fakeDataSource = FakeDataSource(null)
+        fakeDataSource = FakeDataSource()
         fakeDataSource.setShouldReturnError(true)
         remindersListViewModel = RemindersListViewModel(ApplicationProvider.getApplicationContext(),
             fakeDataSource)
@@ -61,14 +64,16 @@ class RemindersListViewModelTest {
         remindersListViewModel.loadReminders()
         // check that snackbar exists and is showing correct message
         assertThat(remindersListViewModel.showSnackBar.getOrAwaitValue(),
-            `is`("No reminders found"))
+            `is`("error retrieving reminders"))
     }
 
     @Test
-    fun testLoadingIndicator() {
-        fakeDataSource = FakeDataSource(mutableListOf(reminder1, reminder2))
+    fun testLoadingIndicator() = runBlockingTest{
+        fakeDataSource = FakeDataSource()
         remindersListViewModel = RemindersListViewModel(ApplicationProvider.getApplicationContext(),
             fakeDataSource)
+        fakeDataSource.saveReminder(reminder1)
+        fakeDataSource.saveReminder(reminder2)
         mainCoroutineRule.pauseDispatcher()
         remindersListViewModel.loadReminders()
         // check that loading indicator is shown
