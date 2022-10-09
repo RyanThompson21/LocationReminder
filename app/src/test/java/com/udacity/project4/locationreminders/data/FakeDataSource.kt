@@ -28,7 +28,13 @@ class FakeDataSource() : ReminderDataSource {
         if (shouldReturnError) {
             return Result.Error("error retrieving reminder")
         }
-        return Result.Success(remindersList.getValue(id))
+        val reminder = remindersList.getValue(id)
+        if (reminder != null) {
+            return Result.Success(remindersList.getValue(id))
+        }
+        else {
+            Result.Error("Reminder not found!")
+        }
     }
 
     override suspend fun deleteAllReminders() {
