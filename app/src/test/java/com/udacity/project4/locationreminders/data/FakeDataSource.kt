@@ -28,12 +28,10 @@ class FakeDataSource() : ReminderDataSource {
         if (shouldReturnError) {
             return Result.Error("error retrieving reminder")
         }
-        val reminder = remindersList.getValue(id)
-        if (reminder != null) {
+        if (remindersList.containsValue(id)) {
             return Result.Success(remindersList.getValue(id))
-        }
-        else {
-            Result.Error("Reminder not found!")
+        } else {
+            return Result.Error("Reminder not found!")
         }
     }
 
