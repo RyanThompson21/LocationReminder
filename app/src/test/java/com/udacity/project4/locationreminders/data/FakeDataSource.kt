@@ -28,7 +28,7 @@ class FakeDataSource() : ReminderDataSource {
         if (shouldReturnError) {
             return Result.Error("error retrieving reminder")
         }
-        if (remindersList.containsValue(id)) {
+        if (remindersList.contains(id)) {
             return Result.Success(remindersList.getValue(id))
         } else {
             return Result.Error("Reminder not found!")
